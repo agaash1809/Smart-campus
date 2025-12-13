@@ -1,0 +1,13 @@
+# ===== Backend (Spring Boot) =====
+backend/target/
+backend/.env
+
+# ===== Frontend (React) =====
+smart-campus-frontend/node_modules/
+smart-campus-frontend/dist/
+smart-campus-frontend/.env
+
+# ===== IDE / OS =====
+.vscode/
+.idea/
+.DS_Store

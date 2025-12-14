@@ -9,6 +9,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
@@ -26,8 +27,11 @@ public class IndexService implements DisposableBean {
     private static final String FIELD_CHUNKID = "chunkId";
     private static final String FIELD_CONTENT = "content";
 
-    private final Path indexPath = Path.of("D:/SMART CAMPUS PROJECT/uploads/index");
+    // ✅ Inject cloud-safe upload directory
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
+    private Path indexPath;
     private IndexWriter writer;
     private Analyzer analyzer;
 
@@ -37,8 +41,11 @@ public class IndexService implements DisposableBean {
 
         analyzer = new StandardAnalyzer();
 
+        // ✅ Cloud-safe index path
+        indexPath = Path.of(uploadDir, "index");
         Files.createDirectories(indexPath);
-        System.out.println("Index directory ensured at: " + indexPath.toString());
+
+        System.out.println("Index directory ensured at: " + indexPath.toAbsolutePath());
 
         FSDirectory dir = FSDirectory.open(indexPath);
 
@@ -50,45 +57,45 @@ public class IndexService implements DisposableBean {
         System.out.println("Lucene IndexWriter initialized successfully!");
     }
 
-   public void indexDocument(String docId, String text) throws IOException {
-    System.out.println("INDEXING STARTED for doc " + docId);
-    writer.deleteDocuments(new Term("docId", docId));
-    System.out.println("OLD INDEX REMOVED");
+    public void indexDocument(String docId, String text) throws IOException {
+        System.out.println("INDEXING STARTED for doc " + docId);
 
-    int chunkSize = 500;
-    int overlap = 100;
+        writer.deleteDocuments(new Term(FIELD_DOCID, docId));
+        System.out.println("OLD INDEX REMOVED");
 
-    int start = 0;
-    int chunkNum = 0;
+        int chunkSize = 500;
+        int overlap = 100;
 
-    while (start < text.length()) {
+        int start = 0;
+        int chunkNum = 0;
 
-        int end = Math.min(start + chunkSize, text.length());
-        String chunk = text.substring(start, end);
+        while (start < text.length()) {
 
-        Document doc = new Document();
-        doc.add(new StringField("docId", docId, Field.Store.YES));
-        doc.add(new StringField("chunkId", docId + "_" + chunkNum, Field.Store.YES));
-        doc.add(new TextField("content", chunk, Field.Store.YES));
+            int end = Math.min(start + chunkSize, text.length());
+            String chunk = text.substring(start, end);
 
-        writer.addDocument(doc);
-        System.out.println("CHUNK ADDED: " + chunkNum);
+            Document doc = new Document();
+            doc.add(new StringField(FIELD_DOCID, docId, Field.Store.YES));
+            doc.add(new StringField(FIELD_CHUNKID, docId + "_" + chunkNum, Field.Store.YES));
+            doc.add(new TextField(FIELD_CONTENT, chunk, Field.Store.YES));
 
-        chunkNum++;
+            writer.addDocument(doc);
+            System.out.println("CHUNK ADDED: " + chunkNum);
 
-        start = start + (chunkSize - overlap);
+            chunkNum++;
+            start = start + (chunkSize - overlap);
 
-     
-        if (start <= 0) break;
+            if (start <= 0) break;
+        }
+
+        writer.commit();
+        System.out.println("INDEX COMMIT DONE");
     }
 
-    writer.commit();
-    System.out.println("INDEX COMMIT DONE");
-}
-
-
     public List<SearchResult> search(String queryString, String docIdFilter, int topK) throws Exception {
+
         try (DirectoryReader reader = DirectoryReader.open(writer)) {
+
             IndexSearcher searcher = new IndexSearcher(reader);
 
             String[] fields = new String[]{FIELD_CONTENT};

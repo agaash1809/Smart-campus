@@ -17,7 +17,7 @@ Tech Stack
 - Render & Vercel
 
 Live URLs
-Frontend: https://your-frontend.vercel.app  
+Frontend: https://smart-campus-kappa-three.vercel.app/ 
 Backend: https://smart-campus-backend-o43b.onrender.com
 
 Features

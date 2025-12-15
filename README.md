@@ -5,8 +5,8 @@ question answering, summarization, and quiz generation.
 
 Application link- https://smart-campus-kappa-three.vercel.app/
 possible issues during running application:
-1.since backend use free api tokens of grop AI which have certain day limit. If day limit exceed, backend reponse error.
-2.for first upload file it took more time than usual because of cold start. Wait unit page shows "uploaded:File_name".(approx 2 min for first upload).
+1.since backend use free api tokens of grop AI which have certain day limit. If day limit exceed, backend response error.
+2.for first upload file, it took more time than usual because of cold start. Wait until page shows "uploaded:File_name".(approx 2 min for first upload).
 
 Tech Stack
 - React (Vite)

@@ -21,6 +21,7 @@ Frontend: https://smart-campus-kappa-three.vercel.app/
 Backend: https://smart-campus-backend-o43b.onrender.com
 
 Features
+- Drag & Drop file
 - Upload PDFs
 - Ask questions
 - Generate summaries

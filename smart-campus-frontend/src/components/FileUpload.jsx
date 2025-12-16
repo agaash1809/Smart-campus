@@ -42,7 +42,7 @@ export default function FileUpload({ onUploaded }) {
           padding: 24,
           borderRadius: 8,
           textAlign: "center",
-          background: dragActive ? "#f5f5f5" : "white",
+          background: dragActive ? "#635f5fff" : "#333232ff",
         }}
       >
         <p>Drag & drop a file here (PDF, DOCX, PPTX) or</p>

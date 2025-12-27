@@ -29,10 +29,10 @@ public class FileController {
             DocInfo info = fileService.saveAndExtract(file);
 
             
-            String fullText = DocStore.DOC_TEXTS.get(info.getDocId());
-            indexService.indexDocument(info.getDocId(), fullText);
+            // String fullText = DocStore.DOC_TEXTS.get(info.getDocId());
+            // indexService.indexDocument(info.getDocId(), fullText);
 
-            return ResponseEntity.ok(info);
+            return ResponseEntity.ok(info);//docId, filename,preview
 
         } catch (Exception e) {
             e.printStackTrace();
